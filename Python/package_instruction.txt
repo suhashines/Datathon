@@ -1,0 +1,7 @@
+to import any package
+-- open cmd as administrator
+-- search python and find its location
+-- copy its path upto \python.exe
+-- in cmd write cd "path"
+-- cd Script
+-- pip install "package_name"
