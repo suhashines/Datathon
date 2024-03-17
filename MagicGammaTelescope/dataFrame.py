@@ -5,6 +5,7 @@ from sklearn.preprocessing import StandardScaler
 from imblearn.over_sampling import RandomOverSampler
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import classification_report
+from sklearn.naive_bayes import GaussianNB
 
 def scale_dataset(dataFrame,overSample=False):
 
@@ -124,3 +125,11 @@ print(classification_report(y_test,y_pred))
 # precision : 0.77 of hadrons -> if model says there are 100 hadrons, actually there are 77 
 # recall : 0.68 of hadrons -> Given 100 hadrons the model will be able to identify 68 of them
 
+#now that we have a report we can apply naive bayes theorem
+
+nb_model = GaussianNB()
+nb_model = nb_model.fit(x_train,y_train)
+
+y_pred = nb_model.predict(x_test)
+
+print(classification_report(y_test, y_pred))
