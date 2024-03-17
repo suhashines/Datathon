@@ -6,6 +6,12 @@ from imblearn.over_sampling import RandomOverSampler
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import classification_report
 from sklearn.naive_bayes import GaussianNB
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+import tensorflow as tf
+import functions
+
+
 
 def scale_dataset(dataFrame,overSample=False):
 
@@ -78,7 +84,7 @@ train,valid,test = np.split(df.sample(frac=1),[int(0.6*len(df)),int(0.8*len(df))
 #[int(0.6*len(df)),int(0.8*len(df))] everything between 60 and 80 percent will go to my valid dataset and others will go
 # to train and test accordingly
 
-print(train)
+#print(train)
 
 # some important observations 
 #---------------1--------------------------
@@ -91,16 +97,17 @@ print(train)
 #--------------------2--------------------------
 # let's see the density of gammas and handrons feature vectors in dataset
 
-print(len(train[train['class']==1]))  # 7377
+#print(len(train[train['class']==1]))  # 7377
 
-print(len(train[train['class']==0]))  # 4035
+#print(len(train[train['class']==0]))  # 4035
 
 #so not enough hadrons as compared to gammas, so we want to oversample our data
 #so let's another param to our scale_dataset function -> overSample -> overSample the data that has less quantity
 
+#prev_train,prev_x,prev_y = scale_dataset(train)
 train, x_train, y_train = scale_dataset(train,True)
 
-print(sum(y_train==0))
+#print(sum(y_train==0))
 
 valid, x_valid, y_valid = scale_dataset(valid)
 
@@ -118,18 +125,50 @@ knn_model.fit(x_train, y_train)
 
 y_pred = knn_model.predict(x_test)
 
-print(classification_report(y_test,y_pred))
+#print(classification_report(y_test,y_pred))
 
 # there are two important things in a classification_report 
 
 # precision : 0.77 of hadrons -> if model says there are 100 hadrons, actually there are 77 
 # recall : 0.68 of hadrons -> Given 100 hadrons the model will be able to identify 68 of them
 
-#now that we have a report we can apply naive bayes theorem
+#now that we have a report we can apply naive bayes theorem, the detail of this model
+# can be found in docs
 
 nb_model = GaussianNB()
 nb_model = nb_model.fit(x_train,y_train)
 
 y_pred = nb_model.predict(x_test)
 
-print(classification_report(y_test, y_pred))
+#print(classification_report(y_test, y_pred))
+
+#now let's learn about logistic regression that helps to categorise our dataset
+
+lg_model = LogisticRegression()
+lg_model.fit(x_train,y_train)
+y_pred = lg_model.predict(x_test)
+#print(classification_report(y_test, y_pred))
+
+#just learnt about another model
+# Support Vector Machine
+
+svc_model = SVC()
+svc_model.fit(x_train,y_train)
+y_pred = svc_model.predict(x_test)
+
+#print(classification_report(y_test,y_pred))
+
+#now we will apply neural network model
+#for this we need to build one and train it
+
+epochs = 100
+
+for num_nodes in [16,32,64]:
+    for dropout_prob in [0,0.2]:
+        for lr in [0.01,0.005,0.001]:
+            for batch_size in [32,64,128]:
+                model,history = functions.train_model(x_train,y_train,num_nodes,epochs,batch_size,dropout_prob)
+                
+
+
+
